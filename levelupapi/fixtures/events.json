@@ -1,0 +1,12 @@
+[
+  {
+      "model": "levelupapi.event",
+      "pk": 1,
+      "fields": {
+          "game": 1,
+          "organizer": 1, 
+          "description": "Be the best at Monopoly fool.",
+          "datetime": "2020-11-17 19:00"
+      }
+  }
+]
