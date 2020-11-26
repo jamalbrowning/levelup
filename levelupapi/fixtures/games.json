@@ -1,0 +1,39 @@
+[
+  {
+      "model": "levelupapi.game",
+      "pk":1,
+      "fields": {
+          "title": "Monopoly",
+          "maker": "Jambo",
+          "skill_level": 4,
+          "gamer": 1,
+          "game_type": 1,
+          "number_of_players": 4
+
+      }
+  },
+  {
+      "model": "levelupapi.game",
+      "pk":2,
+      "fields": {
+          "title": "Charades",
+          "maker": "Jambo",
+          "skill_level": 2,
+          "gamer": 1,
+          "game_type": 2,
+          "number_of_players": 10
+      }
+  },
+  {
+      "model": "levelupapi.game",
+      "pk":3,
+      "fields": {
+          "title": "Bang Bang",
+          "maker": "Jambo",
+          "skill_level": 10,
+          "gamer": 1,
+          "game_type": 3,
+          "number_of_players": 12
+        }
+  }
+]t
