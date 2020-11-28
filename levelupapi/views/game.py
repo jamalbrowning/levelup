@@ -6,8 +6,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from levelupapi.models import Game, GameType, Gamer
-
+from levelupapi.models.game import Game
+from levelupapi.models.game_type import GameType
+from levelupapi.models.gamer import Gamer
 
 class Games(ViewSet):
     """Level up games"""

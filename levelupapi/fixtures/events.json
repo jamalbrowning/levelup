@@ -1,12 +1,35 @@
 [
   {
-      "model": "levelupapi.event",
-      "pk": 1,
-      "fields": {
-          "game": 1,
-          "organizer": 1, 
-          "description": "Be the best at Monopoly fool.",
-          "datetime": "2020-11-17 19:00"
-      }
+    "model": "levelupapi.event",
+    "pk": 1,
+    "fields": {
+      "game": 1,
+      "organizer": 1,
+      "description": "Welcome To at lunch",
+      "date": "2020-10-28",
+      "time": "12:00"
+    }
+  },
+  {
+    "model": "levelupapi.event",
+    "pk": 2,
+    "fields": {
+      "game": 2,
+      "organizer": 1,
+      "description": "Friday night Settlers and drinks",
+      "date": "2021-01-12",
+      "time": "19:30"
+    }
+  },
+  {
+    "model": "levelupapi.event",
+    "pk": 3,
+    "fields": {
+      "game": 3,
+      "organizer": 1,
+      "description": "Vale of the Frost King campaign. All weekend.",
+      "date": "2021-04-20",
+      "time": "19:30"
+    }
   }
 ]
