@@ -6,16 +6,14 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from levelupapi.models.game import Game
-from levelupapi.models.game_type import GameType
-from levelupapi.models.gamer import Gamer
+from levelupapi.models import Game, GameType, Gamer
+
 
 class Games(ViewSet):
     """Level up games"""
 
     def create(self, request):
         """Handle POST operations
-
         Returns:
             Response -- JSON serialized game instance
         """
@@ -57,7 +55,6 @@ class Games(ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single game
-
         Returns:
             Response -- JSON serialized game instance
         """
@@ -75,7 +72,6 @@ class Games(ViewSet):
 
     def update(self, request, pk=None):
         """Handle PUT requests for a game
-
         Returns:
             Response -- Empty body with 204 status code
         """
@@ -101,7 +97,6 @@ class Games(ViewSet):
 
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single game
-
         Returns:
             Response -- 200, 404, or 500 status code
         """
@@ -119,7 +114,6 @@ class Games(ViewSet):
 
     def list(self, request):
         """Handle GET requests to games resource
-
         Returns:
             Response -- JSON serialized list of games
         """
@@ -140,7 +134,6 @@ class Games(ViewSet):
 
 class GameSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for games
-
     Arguments:
         serializer type
     """
