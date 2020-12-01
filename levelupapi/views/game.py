@@ -9,7 +9,7 @@ from rest_framework import status
 from levelupapi.models import Game, GameType, Gamer
 
 
-class Games(ViewSet):
+class GamesViewSet(ViewSet):
     """Level up games"""
 
     def create(self, request):
@@ -35,7 +35,7 @@ class Games(ViewSet):
         # whose `id` is what the client passed as the
         # `gameTypeId` in the body of the request.
         gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.gametype = gametype
+        game.game_type = gametype
 
         # Try to save the new game to the database, then
         # serialize the game instance as JSON, and send the
@@ -143,5 +143,5 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
             view_name='game',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'title', 'maker', 'number_of_players', 'skill_level', 'gametype')
+        fields = ('id', 'url', 'title', 'maker', 'number_of_players', 'skill_level', 'game_type')
         depth = 1
