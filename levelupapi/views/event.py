@@ -90,18 +90,32 @@ class EventsViewSet(ViewSet):
             return Response({'message': ex.args[0]}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def list(self, request):
-        """Handle GET requests to events to resource
+        """Handle GET requests to events resource
+
         Returns:
             Response -- JSON serialized list of events
         """
+        # Get the current authenticated user
+        gamer = Gamer.objects.get(user=request.auth.user)
         events = Event.objects.all()
 
-        # support filtering events by game
+        # Set the `joined` property on every event
+        for event in events:
+            event.joined = None
+
+            try:
+                GamerEvent.objects.get(event=event, gamer=gamer)
+                event.joined = True
+            except GamerEvent.DoesNotExist:
+                event.joined = False
+
+        # Support filtering events by game
         game = self.request.query_params.get('gameId', None)
         if game is not None:
-            events. events.filter(game__id=game)
-        
-        serializer = EventSerializer(events, many=True, context={'request': request})
+            events = events.filter(game__id=type)
+
+        serializer = EventSerializer(
+            events, many=True, context={'request': request})
         return Response(serializer.data)
 
     @action(methods=['get', 'post', 'delete'], detail=True)
@@ -199,5 +213,5 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             view_name = 'event',
             lookup_field = 'id'
         )
-        fields = ('id', 'url', 'game', 'organizer', 'description', 'date', 'time')
+        fields = ('id', 'url', 'game', 'organizer', 'description', 'date', 'time', "joined")
 # ^^ all of that is another way to do it with more control instead of just setting it to depth = 1 like in games.py
