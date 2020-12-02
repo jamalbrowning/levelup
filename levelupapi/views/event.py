@@ -13,6 +13,7 @@ from levelupapi.models.game import Game
 from levelupapi.models.event import Event
 from levelupapi.models.gamer import Gamer
 from levelupapi.views.game import GameSerializer
+from levelupapi.models.gamer_event import GamerEvent
 
 class EventsViewSet(ViewSet):
     """Level up events"""
@@ -106,23 +107,27 @@ class EventsViewSet(ViewSet):
     @action(methods=['get', 'post', 'delete'], detail=True)
     def signup(self, request, pk=None):
         """Managing gamers signing up for events"""
-        # http://localhost:8000/events/2/signup
 
         # A gamer wants to sign up for an event
         if request.method == "POST":
-            # The pk would be `2` if the above url was requested
+            # The pk would be `2` if the URL above was requested
             event = Event.objects.get(pk=pk)
 
-            # Django uses the `authorization` header to determine 
-            # which user is making the request to sign up.
+            # Django uses the `Authorization` header to determine
+            # which user is making the request to sign up
             gamer = Gamer.objects.get(user=request.auth.user)
 
             try:
                 # Determine if the user is already signed up
-                registration = EventGamers.objects.get(event=event, gamer=gamer)
-                return Response({'message': 'Gamer already signed up for this event.'}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            except EventGamers.DoesNotExist:
-                registration = EventGamers()
+                registration = GamerEvent.objects.get(
+                    event=event, gamer=gamer)
+                return Response(
+                    {'message': 'Gamer already signed up this event.'},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            except GamerEvent.DoesNotExist:
+                # The user is not signed up.
+                registration = GamerEvent()
                 registration.event = event
                 registration.gamer = gamer
                 registration.save()
@@ -136,21 +141,28 @@ class EventsViewSet(ViewSet):
             try:
                 event = Event.objects.get(pk=pk)
             except Event.DoesNotExist:
-                return Response({'message': 'Event does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Get authenticated user
+                return Response(
+                    {'message': 'Event does not exist.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Get the authenticated user
             gamer = Gamer.objects.get(user=request.auth.user)
 
             try:
                 # Try to delete the signup
-                registration = EventGamers.objects.get(event=event, gamer=gamer)
+                registration = GamerEvent.objects.get(
+                    event=event, gamer=gamer)
                 registration.delete()
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-            except EventGamers.DoesNotExist:
-                return Response({'message': 'Not currently registered for event'}, status=status.HTTP_404_NOT_FOUND)
-            
-        # If the client performs a request with a method of 
+            except GamerEvent.DoesNotExist:
+                return Response(
+                    {'message': 'Not currently registered for event.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+        # If the client performs a request with a method of
         # anything other than POST or DELETE, tell client that
         # the method is not supported
         return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
