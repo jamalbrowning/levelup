@@ -3,15 +3,14 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
-from levelupapi.models import GameType
+from levelupapi.models.game_type import GameType
 
 
-class GameTypes(ViewSet):
+class GameTypesViewSet(ViewSet):
     """Level up game types"""
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single game type
-
         Returns:
             Response -- JSON serialized game type
         """
@@ -24,7 +23,6 @@ class GameTypes(ViewSet):
 
     def list(self, request):
         """Handle GET requests to get all game types
-
         Returns:
             Response -- JSON serialized list of game types
         """
@@ -37,16 +35,13 @@ class GameTypes(ViewSet):
             gametypes, many=True, context={'request': request})
         return Response(serializer.data)
 
+
+
 class GameTypeSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for game types
-
     Arguments:
         serializers
     """
     class Meta:
         model = GameType
-        url = serializers.HyperlinkedIdentityField(
-            view_name='gametype',
-            lookup_field='id'
-        )
         fields = ('id', 'url', 'label')

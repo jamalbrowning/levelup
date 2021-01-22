@@ -1,6 +1,5 @@
 """View module for handling requests about events"""
-from http.client import HTTPResponse
-from django.views.generic.base import View
+from levelupapi.models.gamer_event import GamerEvent
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
@@ -9,11 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
-from levelupapi.models.game import Game
-from levelupapi.models.event import Event
-from levelupapi.models.gamer import Gamer
-from levelupapi.views.game import GameSerializer
-from levelupapi.models.gamer_event import GamerEvent
+from levelupapi.models import Game, Event, Gamer
+
 
 class EventsViewSet(ViewSet):
     """Level up events"""
@@ -58,11 +54,12 @@ class EventsViewSet(ViewSet):
         Returns:
             Response -- Empty body with 204 status code
         """
-        organizer = Gamer.objects.get(pk=pk)
+        organizer = Gamer.objects.get(user=request.auth.user)
+
         event = Event.objects.get(pk=pk)
         event.description = request.data["description"]
-        event.date = request.data['date']
-        event.time = request.data['time']
+        event.date = request.data["date"]
+        event.time = request.data["time"]
         event.organizer = organizer
 
         game = Game.objects.get(pk=request.data["gameId"])
@@ -73,25 +70,23 @@ class EventsViewSet(ViewSet):
 
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single game
-        
         Returns:
-            Response -- 200, 404, 500
+            Response -- 200, 404, or 500 status code
         """
-        
-        try: 
+        try:
             event = Event.objects.get(pk=pk)
             event.delete()
 
-            return Response({}, status = status.HTTP_204_NO_CONTENT)
-        
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
         except Event.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status = status.HTTP_404_NOT_FOUND)
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as ex:
-            return Response({'message': ex.args[0]}, status = status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def list(self, request):
         """Handle GET requests to events resource
-
         Returns:
             Response -- JSON serialized list of events
         """
@@ -180,16 +175,19 @@ class EventsViewSet(ViewSet):
         # anything other than POST or DELETE, tell client that
         # the method is not supported
         return Response({}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
 class EventUserSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer's related Django user"""
-    class Meta: 
+    class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
 
 
-class EventGamerSerializer(serializers.ModelSerializer):
+class GamerEventerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer"""
     user = EventUserSerializer(many=False)
+
     class Meta:
         model = Gamer
         fields = ['user']
@@ -201,17 +199,16 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
         model = Game
         fields = ('id', 'title', 'maker', 'number_of_players', 'skill_level')
 
-
 class EventSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for events"""
-    organizer = EventGamerSerializer(many=False)
+    organizer = GamerEventerializer(many=False)
     game = GameSerializer(many=False)
 
-    class Meta: 
+    class Meta:
         model = Event
         url = serializers.HyperlinkedIdentityField(
-            view_name = 'event',
-            lookup_field = 'id'
+            view_name='event',
+            lookup_field='id'
         )
-        fields = ('id', 'url', 'game', 'organizer', 'description', 'date', 'time', "joined")
-# ^^ all of that is another way to do it with more control instead of just setting it to depth = 1 like in games.py
+        fields = ('id', 'url', 'game', 'organizer',
+                  'description', 'date', 'time', 'joined')

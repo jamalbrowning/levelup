@@ -6,10 +6,8 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-# from levelupapi.models import Game, GameType, Gamer
-from levelupapi.models.game import Game
-from levelupapi.models.game_type import GameType
-from levelupapi.models.gamer import Gamer
+from levelupapi.models import Game, GameType, Gamer
+
 
 class GamesViewSet(ViewSet):
     """Level up games"""
@@ -29,8 +27,8 @@ class GamesViewSet(ViewSet):
         game = Game()
         game.title = request.data["title"]
         game.maker = request.data["maker"]
-        game.number_of_players = request.data["number_of_players"]
-        game.skill_level = request.data["skill_level"]
+        game.number_of_players = request.data["numberOfPlayers"]
+        game.skill_level = request.data["skillLevel"]
         game.gamer = gamer
 
         # Use the Django ORM to get the record from the database
@@ -85,12 +83,12 @@ class GamesViewSet(ViewSet):
         game = Game.objects.get(pk=pk)
         game.title = request.data["title"]
         game.maker = request.data["maker"]
-        game.number_of_players = request.data["number_of_players"]
-        game.skill_level = request.data["skill_level"]
+        game.number_of_players = request.data["numberOfPlayers"]
+        game.skill_level = request.data["skillLevel"]
         game.gamer = gamer
 
         gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.game_type = gametype
+        game.gametype = gametype
         game.save()
 
         # 204 status code means everything worked but the
@@ -134,7 +132,8 @@ class GamesViewSet(ViewSet):
             games, many=True, context={'request': request})
         return Response(serializer.data)
 
-class GameSerializer(serializers.HyperlinkedModelSerializer):
+
+class GameSerializer(serializers.ModelSerializer):
     """JSON serializer for games
     Arguments:
         serializer type
