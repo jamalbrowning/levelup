@@ -27,8 +27,8 @@ class GamesViewSet(ViewSet):
         game = Game()
         game.title = request.data["title"]
         game.maker = request.data["maker"]
-        game.number_of_players = request.data["numberOfPlayers"]
-        game.skill_level = request.data["skillLevel"]
+        game.number_of_players = request.data["number_of_players"]
+        game.skill_level = request.data["skill_level"]
         game.gamer = gamer
 
         # Use the Django ORM to get the record from the database
@@ -69,6 +69,9 @@ class GamesViewSet(ViewSet):
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
     def update(self, request, pk=None):
         """Handle PUT requests for a game
@@ -83,8 +86,8 @@ class GamesViewSet(ViewSet):
         game = Game.objects.get(pk=pk)
         game.title = request.data["title"]
         game.maker = request.data["maker"]
-        game.number_of_players = request.data["numberOfPlayers"]
-        game.skill_level = request.data["skillLevel"]
+        game.number_of_players = request.data["number_of_players"]
+        game.skill_level = request.data['skill_level']
         game.gamer = gamer
 
         gametype = GameType.objects.get(pk=request.data["gameTypeId"])
