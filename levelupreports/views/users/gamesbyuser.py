@@ -19,7 +19,7 @@ def usergame_list(request):
                     g.id,
                     g.title,
                     g.maker,
-                    g.gametype_id,
+                    g.game_type_id,
                     g.number_of_players,
                     g.skill_level,
                     u.id user_id,
@@ -57,13 +57,13 @@ def usergame_list(request):
             games_by_user = {}
 
             for row in dataset:
-                # Create a Game instance and set its properties
+                # Crete a Game instance and set its properties
                 game = Game()
                 game.title = row["title"]
                 game.maker = row["maker"]
                 game.skill_level = row["skill_level"]
                 game.number_of_players = row["number_of_players"]
-                game.gametype_id = row["gametype_id"]
+                game.game_type_id = row["game_type_id"]
 
                 # Store the user's id
                 uid = row["user_id"]
